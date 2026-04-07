@@ -1,9 +1,12 @@
 #include <userver/components/component_list.hpp>
 #include <userver/components/minimal_server_component_list.hpp>
 #include <userver/utils/daemon_run.hpp>
+#include <userver/testsuite/testsuite_support.hpp>
+#include <userver/clients/dns/component.hpp>
+
 #include <userver/storages/postgres/component.hpp>
 
-#include "handlers/auth/post/auth.hpp"
+#include <handlers/auth/post/auth.hpp>
 #include <handlers/arrivals/post/arrivals.hpp>
 #include <handlers/arrivals/get/arrivals.hpp>
 #include <handlers/inventory/post/inventory.hpp>
@@ -17,13 +20,14 @@
 int main(int argc, char* argv[]) {
     auto component_list =
         userver::components::MinimalServerComponentList()
+            .Append<userver::components::TestsuiteSupport>()
+            .Append<userver::clients::dns::Component>()
             .Append<userver::components::Postgres>("postgres-db")
             .Append<AuthHandler>()
             .Append<ProductsHandler>()
             .Append<ProductsCreateHandler>()
             .Append<ProductsUpdateHandler>()
             .Append<ProductsDeleteHandler>()
-            // .Append<ProductsSearchHandler>() TODO: не нашёл нужный handler
             .Append<InventoryHandler>()
             .Append<InventoryWriteoffHandler>()
             .Append<UserHandler>()

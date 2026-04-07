@@ -1,11 +1,15 @@
 components_manager:
   components:
     postgres-db:
+      dns_resolver: async
+      sync-start: true
       dbconnection: postgres://user:pass@db:5432/wms
-      dbconnection_pool_settings:
-          max_pool_size: 10
-          min_pool_size: 4
-          connecting_limit: 10
+      blocking_task_processor: fs-task-processor
+
+    testsuite-support: {}
+
+    dns-client:
+      fs-task-processor: fs-task-processor
 
     logging:
       loggers:
@@ -46,11 +50,6 @@ components_manager:
     handler-products-delete:
       path: /products/{id}
       method: DELETE
-      task_processor: main-task-processor
-
-    handler-products-search:
-      path: /products/search
-      method: GET
       task_processor: main-task-processor
 
     handler-inventory-writeoff:
