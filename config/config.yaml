@@ -1,0 +1,88 @@
+components_manager:
+  components:
+    postgres-db:
+      dbconnection: postgres://user:pass@db:5432/wms
+      dbconnection_pool_settings:
+          max_pool_size: 10
+          min_pool_size: 4
+          connecting_limit: 10
+
+    logging:
+      loggers:
+        default:
+          file_path: "@stdout"
+          level: info
+
+    server:
+      listener:
+        port: 8080
+        task_processor: main-task-processor
+
+    handler-auth:
+      path: /auth
+      method: POST
+      task_processor: main-task-processor
+
+    handler-products:
+      path: /products
+      method: GET
+      task_processor: main-task-processor
+
+    handler-inventory:
+      path: /inventory
+      method: GET
+      task_processor: main-task-processor
+
+    handler-products-create:
+      path: /products
+      method: POST
+      task_processor: main-task-processor
+
+    handler-products-update:
+      path: /products/{id}
+      method: PATCH
+      task_processor: main-task-processor
+
+    handler-products-delete:
+      path: /products/{id}
+      method: DELETE
+      task_processor: main-task-processor
+
+    handler-products-search:
+      path: /products/search
+      method: GET
+      task_processor: main-task-processor
+
+    handler-inventory-writeoff:
+      path: /inventory/writeoff
+      method: POST
+      task_processor: main-task-processor
+
+    handler-user:
+      path: /users/{username}
+      method: GET
+      task_processor: main-task-processor
+
+    handler-arrivals-get:
+      path: /arrivals
+      method: GET
+      task_processor: main-task-processor
+
+    handler-arrivals-post:
+      path: /arrivals
+      method: POST
+      task_processor: main-task-processor
+
+  task_processors:
+    main-task-processor:
+      worker_threads: 2
+
+    fs-task-processor:
+      worker_threads: 2
+
+  coro_pool:
+    initial_size: 1000
+    max_size: 1000
+
+  event_thread_pool:
+    threads: 2
