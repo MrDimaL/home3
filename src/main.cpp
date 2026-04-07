@@ -12,7 +12,7 @@
 int main(int argc, char* argv[]) {
     auto component_list =
         userver::components::MinimalServerComponentList()
-            .Append<userver::storages::postgres::Component>("postgres-db")
+            .Append<userver::components::Postgres>("postgres-db")
             .Append<AuthHandler>()
             .Append<ProductsHandler>()
             .Append<ProductsCreateHandler>()

@@ -1,0 +1,46 @@
+#include "arrivals.hpp"
+
+#include <userver/formats/json/value_builder.hpp>
+#include <userver/storages/postgres/component.hpp>
+
+ArrivalsHandlerGet::ArrivalsHandlerGet(
+    const userver::components::ComponentConfig& config,
+    const userver::components::ComponentContext& context)
+    : userver::server::handlers::HttpHandlerJsonBase(config, context) : {
+
+    pg_cluster_ =
+        context.FindComponent<userver::storages::postgres::Component>()
+            .GetCluster();
+}
+
+userver::formats::json::Value ArrivalsHandlerGet::HandleRequestJsonThrow(
+    const userver::server::http::HttpRequest&,
+    const userver::formats::json::Value&,
+    userver::server::request::RequestContext&) const {
+
+    auto result = pg_cluster_->Execute(
+        userver::storages::postgres::ClusterHostType::kSlave,
+        "SELECT a.id, p.name as product_name, a.quantity, a.arrival_date, u.username as created_by "
+        "FROM arrivals a "
+        "JOIN products p ON a.product_id = p.id "
+        "LEFT JOIN users u ON a.created_by = u.id "
+        "ORDER BY a.arrival_date DESC");
+
+    userver::formats::json::ValueBuilder items;
+
+    for (const auto& row : result) {
+        userver::formats::json::ValueBuilder item;
+        item["id"] = row["id"].As<int>();
+        item["product"] = row["product_name"].As<std::string>();
+        item["quantity"] = row["quantity"].As<int>();
+        item["date"] = row["arrival_date"].As<std::string>();
+
+        if (!row["created_by"].IsNull()) {
+            item["created_by"] = row["created_by"].As<std::string>();
+        }
+
+        items.PushBack(std::move(item));
+    }
+
+    return items.ExtractValue();
+}
