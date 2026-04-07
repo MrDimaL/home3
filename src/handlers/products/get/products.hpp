@@ -14,9 +14,9 @@ public:
                   const userver::components::ComponentContext &context);
 
   userver::formats::json::Value HandleRequestJsonThrow(
-      const userver::server::http::HttpRequest &, const formats::json::Value &,
+      const userver::server::http::HttpRequest &, const userver::formats::json::Value &,
       userver::server::request::RequestContext &) const override;
 
 private:
-  userver::storages::ClusterPtr pg_cluster_;
+  userver::storages::postgres::ClusterPtr pg_cluster_;
 };

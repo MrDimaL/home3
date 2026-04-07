@@ -3,11 +3,16 @@
 #include <userver/utils/daemon_run.hpp>
 #include <userver/storages/postgres/component.hpp>
 
-#include "handlers/auth.hpp"
-#include "handlers/products.hpp"
-#include "handlers/inventory.hpp"
-#include "handlers/users.hpp"
-#include "handlers/arrivals.hpp"
+#include "handlers/auth/post/auth.hpp"
+#include <handlers/arrivals/post/arrivals.hpp>
+#include <handlers/arrivals/get/arrivals.hpp>
+#include <handlers/inventory/post/inventory.hpp>
+#include <handlers/inventory/get/inventory.hpp>
+#include <handlers/products/post/products.hpp>
+#include <handlers/products/get/products.hpp>
+#include <handlers/products/delete/products.hpp>
+#include <handlers/products/patch/products.hpp>
+#include <handlers/users/get/users.hpp>
 
 int main(int argc, char* argv[]) {
     auto component_list =
@@ -18,7 +23,7 @@ int main(int argc, char* argv[]) {
             .Append<ProductsCreateHandler>()
             .Append<ProductsUpdateHandler>()
             .Append<ProductsDeleteHandler>()
-            .Append<ProductsSearchHandler>()
+            // .Append<ProductsSearchHandler>() TODO: не нашёл нужный handler
             .Append<InventoryHandler>()
             .Append<InventoryWriteoffHandler>()
             .Append<UserHandler>()

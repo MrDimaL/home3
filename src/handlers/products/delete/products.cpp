@@ -3,14 +3,15 @@
 #include <userver/formats/json/value_builder.hpp>
 #include <userver/storages/postgres/component.hpp>
 #include <userver/server/handlers/exceptions.hpp>
+#include <userver/components/component_context.hpp>
 
 ProductsDeleteHandler::ProductsDeleteHandler(
     const userver::components::ComponentConfig& config,
     const userver::components::ComponentContext& context)
-    : userver::server::handlers::HttpHandlerJsonBase(config, context) : {
+    : userver::server::handlers::HttpHandlerJsonBase(config, context) {
 
     pg_cluster_ =
-        context.FindComponent<userver::storages::postgres::Component>()
+        context.FindComponent<userver::components::Postgres>("postgres-db")
             .GetCluster();
 }
 
