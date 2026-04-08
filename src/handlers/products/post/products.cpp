@@ -15,11 +15,16 @@ ProductsCreateHandler::ProductsCreateHandler(
 }
 
 userver::formats::json::Value ProductsCreateHandler::HandleRequestJsonThrow(
-    const userver::server::http::HttpRequest& request,
-    const userver::formats::json::Value&,
+    const userver::server::http::HttpRequest&,
+    const userver::formats::json::Value& request_json,
     userver::server::request::RequestContext&) const {
 
-    auto body = userver::formats::json::FromString(request.RequestBody());
+    const auto& body = request_json;
+
+    if (!body.HasMember("name") || !body.HasMember("sku") || !body.HasMember("price")) {
+        throw userver::server::handlers::ClientError(
+            userver::server::handlers::ExternalBody{"Missing required fields"});
+    }
 
     auto name = body["name"].As<std::string>();
     auto sku = body["sku"].As<std::string>();

@@ -16,11 +16,16 @@ InventoryWriteoffHandler::InventoryWriteoffHandler(
 }
 
 userver::formats::json::Value InventoryWriteoffHandler::HandleRequestJsonThrow(
-    const userver::server::http::HttpRequest& request,
-    const userver::formats::json::Value&,
+    const userver::server::http::HttpRequest&,
+    const userver::formats::json::Value& request_json,
     userver::server::request::RequestContext&) const {
 
-    auto body = userver::formats::json::FromString(request.RequestBody());
+    const auto& body = request_json;
+
+    if (!body.HasMember("product_id") || !body.HasMember("quantity")) {
+        throw userver::server::handlers::ClientError(
+            userver::server::handlers::ExternalBody{"Missing required fields"});
+    }
 
     int product_id = body["product_id"].As<int>();
     int quantity = body["quantity"].As<int>();

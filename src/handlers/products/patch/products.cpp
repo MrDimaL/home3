@@ -17,11 +17,16 @@ ProductsUpdateHandler::ProductsUpdateHandler(
 
 userver::formats::json::Value ProductsUpdateHandler::HandleRequestJsonThrow(
     const userver::server::http::HttpRequest& request,
-    const userver::formats::json::Value&,
+    const userver::formats::json::Value& request_json,
     userver::server::request::RequestContext&) const {
 
     int id = std::stoi(request.GetPathArg("id"));
-    auto body = userver::formats::json::FromString(request.RequestBody());
+    const auto& body = request_json;
+
+    if (!body.HasMember("name") || !body.HasMember("sku") || !body.HasMember("price")) {
+        throw userver::server::handlers::ClientError(
+            userver::server::handlers::ExternalBody{"Missing required fields"});
+    }
 
     auto name = body["name"].As<std::string>();
     auto sku = body["sku"].As<std::string>();
